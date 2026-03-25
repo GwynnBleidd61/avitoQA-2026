@@ -1,0 +1,18 @@
+# Node
+node_modules/
+package-lock.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+.DS_Store
+.idea/
+.vscode/
+
+.env
+/venv
+.venv

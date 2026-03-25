@@ -59,6 +59,10 @@ export class ListPage extends BasePage {
     await this.statsLink.click();
   }
 
+  async openCardByTitle(title: string): Promise<void> {
+    await this.page.getByRole("heading", { name: title }).click();
+  }
+
   async selectCategory(value: string): Promise<void> {
     await this.categorySelect.selectOption(value);
     await this.waitForResultsUpdate();

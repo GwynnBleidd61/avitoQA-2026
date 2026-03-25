@@ -47,6 +47,16 @@ export class StatsPage extends BasePage {
     return this.timerToggleButton.getAttribute("aria-label");
   }
 
+  async getTotalCheckedCount(): Promise<number> {
+    const rawValue = (await this.totalCheckedValue.textContent())?.trim() ?? "";
+    return Number(rawValue.replace(/[^\d]/g, ""));
+  }
+
+  async clickRefreshAndWait(): Promise<void> {
+    await this.refreshButton.click();
+    await this.page.waitForTimeout(1000);
+  }
+
   async getTimerValue(): Promise<string> {
     return (await this.timerValue.textContent())?.trim() ?? "";
   }

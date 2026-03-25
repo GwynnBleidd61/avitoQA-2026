@@ -56,5 +56,25 @@ test.describe("Мобильная версия — переключение те
       revertedText,
       "После второго переключения текст кнопки не вернулся в исходное состояние"
     ).toBe(initialText);
+
+    const initialTextColor = await listPage.getBodyTextColor();
+
+    await listPage.toggleTheme();
+
+    const toggledTextColor = await listPage.getBodyTextColor();
+
+    expect(
+        toggledTextColor,
+        "После первого переключения цвет текста страницы не изменился"
+    ).not.toBe(initialTextColor);
+
+    await listPage.toggleTheme();
+
+    const revertedTextColor = await listPage.getBodyTextColor();
+
+    expect(
+        revertedTextColor,
+        "После второго переключения цвет текста страницы не вернулся в исходное состояние"
+    ).toBe(initialTextColor);
   });
 });

@@ -18,6 +18,11 @@ export class ListPage extends BasePage {
   readonly emptyState: Locator;
   readonly emptyStateResetButton: Locator;
 
+  readonly themeToggleButton: Locator;
+  readonly themeToggleLabel: Locator;
+
+  readonly statsLink: Locator;
+
   constructor(page: Page) {
     super(page);
 
@@ -30,6 +35,9 @@ export class ListPage extends BasePage {
     this.sortBySelect = page.locator("label").filter({ hasText: "Сортировать по" }).locator("..").locator("select");
     this.sortOrderSelect = page.locator("label").filter({ hasText: "Порядок" }).locator("..").locator("select");
     this.resetFiltersButton = page.getByTitle("Сбросить все фильтры");
+    this.themeToggleButton = page.locator('button[aria-label*="theme"]');
+    this.themeToggleLabel = this.themeToggleButton.locator('span[class*="_label_"]');
+    this.statsLink = page.getByRole("link", { name: "Статистика" });
 
     this.cards = page
         .locator('div[class*="_card_"]')
@@ -46,6 +54,10 @@ export class ListPage extends BasePage {
     await this.open("/");
     await this.waitForOpen();
   }
+  
+  async openStatsPageFromHeader(): Promise<void> {
+    await this.statsLink.click();
+  }
 
   async selectCategory(value: string): Promise<void> {
     await this.categorySelect.selectOption(value);
@@ -55,6 +67,7 @@ export class ListPage extends BasePage {
   async fillPriceRange(min: string, max: string): Promise<void> {
     await this.minPriceInput.fill(min);
     await this.maxPriceInput.fill(max);
+    await this.waitForResultsUpdate();
   }
 
   async enableUrgentOnly(): Promise<void> {
@@ -81,6 +94,7 @@ export class ListPage extends BasePage {
 
   async selectSortOrder(value: "asc" | "desc"): Promise<void> {
     await this.sortOrderSelect.selectOption(value);
+    await this.waitForResultsUpdate();
   }
 
   async resetFilters(): Promise<void> {
@@ -118,14 +132,47 @@ export class ListPage extends BasePage {
     return this.cards.getByText("Срочно").count();
   }
 
+  async getThemeToggleAriaLabel(): Promise<string | null> {
+    return this.themeToggleButton.getAttribute("aria-label");
+  }
+
+  async getThemeToggleTitle(): Promise<string | null> {
+     return this.themeToggleButton.getAttribute("title");
+  }
+
+  async getThemeToggleText(): Promise<string> {
+    return (await this.themeToggleLabel.textContent())?.trim() ?? "";
+  }
+
+  async toggleTheme(): Promise<void> {
+    await this.themeToggleButton.click();
+  }
   
+  async getBodyTextColor(): Promise<string> {
+    return this.page.locator("body").evaluate((element) => {
+        return window.getComputedStyle(element).color;
+    });
+  }
+
+  async getBodyBackgroundColor(): Promise<string> {
+    return this.page.locator("body").evaluate((element) => {
+        return window.getComputedStyle(element).backgroundColor;
+    });
+  }
 
   async assertAllPricesInRange(min: number, max: number): Promise<void> {
     const prices = await this.getCardPrices();
 
     for (const price of prices) {
-      expect(price).toBeGreaterThanOrEqual(min);
-      expect(price).toBeLessThanOrEqual(max);
+        expect(
+        price,
+        `После применения фильтра "Диапазон цен" в выдаче осталось объявление с ценой ${price}, которая не входит в диапазон ${min}-${max}`
+        ).toBeGreaterThanOrEqual(min);
+
+        expect(
+        price,
+        `После применения фильтра "Диапазон цен" в выдаче осталось объявление с ценой ${price}, которая не входит в диапазон ${min}-${max}`
+        ).toBeLessThanOrEqual(max);
     }
   }
 

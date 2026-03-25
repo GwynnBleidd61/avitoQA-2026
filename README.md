@@ -4,12 +4,14 @@
 
 ## Что есть в репозитории
 
-* `TESTCASES.md` — тест-кейсы по заданию
-* `BUGS.md` — найденные баги
-* `pages/` — Page Object'ы
-* `helpers/` — вспомогательные функции
-* `tests/desktop/` — desktop-сценарии
-* `tests/mobile/` — mobile-сценарии
+
+* `task1_bugs_on_schennshot.md` - ответ на задание 1 с багами на скриншоте
+* `TESTCASES.md` - тест-кейсы по заданию
+* `BUGS.md` - найденные баги
+* `pages/` - Page Object'ы
+* `helpers/` - вспомогательные функции
+* `tests/desktop/` - desktop-сценарии
+* `tests/mobile/` - mobile-сценарии
 
 ## Стек
 
